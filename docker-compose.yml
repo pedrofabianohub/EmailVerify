@@ -5,7 +5,7 @@ services:
       - "5000:5000"
     environment:
       - FLASK_ENV=production
-      - GEMINI_API_KEY=${GEMINI_API_KEY:-sua-chave-aqui}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
     restart: unless-stopped
 
   frontend:
