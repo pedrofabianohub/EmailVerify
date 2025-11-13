@@ -3,7 +3,7 @@ const emailExamples = [
         id: 1,
         title: 'Produtivo - Reunião Urgente',
         preview: 'Precisamos discutir o projeto urgentemente...',
-        text: 'Precisamos discutir o status do projeto urgentemente. A reunião está marcada para amanhã às 14h. Por favor, confirme sua presença e traga os relatórios atualizados.'
+        text: 'Precisamos discutir o status do projeto urgentemente. A reunião está marcada para amanhã às 14h. Por favor, confirme sua presença e traga os relatórios atualizados. \n\n Atenciosamente, \n Pedro'
     },
     {
         id: 2,

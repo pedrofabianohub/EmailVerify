@@ -39,7 +39,7 @@ createApp({
                 this.result = {
                     category: 'erro',
                     confidence: 0,
-                    response: 'Erro ao processar o email. Tente novamente.',
+                    response: error.message,
                     processing_time: 0,
                     ai_powered: false
                 };
