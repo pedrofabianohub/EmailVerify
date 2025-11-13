@@ -1,0 +1,19 @@
+Assunto: Reunião Urgente - Projeto Sistema de Vendas
+
+Olá equipe,
+
+Precisamos agendar uma reunião urgente para discutir o andamento do projeto do sistema de vendas. Identificamos alguns problemas críticos que precisam ser resolvidos até sexta-feira.
+
+Pontos a serem discutidos:
+- Erro no módulo de pagamentos
+- Integração com API do banco
+- Testes de performance
+- Prazo de entrega para o cliente
+
+A reunião será amanhã (quinta-feira) às 14h na sala de reuniões.
+
+Por favor, confirmem presença e tragam os relatórios atualizados.
+
+Atenciosamente,
+João Silva
+Gerente de Projetos
