@@ -1,0 +1,9 @@
+backend/
+data/
+.env
+*.pyc
+__pycache__/
+.git/
+docker-compose.yml
+Dockerfile
+*.md
