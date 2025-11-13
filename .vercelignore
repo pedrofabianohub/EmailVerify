@@ -5,5 +5,5 @@ data/
 __pycache__/
 .git/
 docker-compose.yml
-Dockerfile
+*/Dockerfile
 *.md
