@@ -6,27 +6,25 @@ from utils.nlp_processor import preprocess_text
 # Configurar Gemini
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('gemini-2.0-flash')
 
 def classify_email(text: str) -> Tuple[str, float]:
-    """Classifica email usando NLP + Gemini para casos ambíguos"""
+    """Sistema híbrido: regras simples + IA para ambíguos"""
     
-    try:
-        # 1. Análise NLP com tokens processados
-        nlp_result = analyze_with_nlp(text)
+    text_lower = text.lower()
+    
+    # Casos óbvios IMPRODUTIVOS
+    if any(word in text_lower for word in ['parabéns', 'obrigad', 'agradec', 'felicit']) and not any(word in text_lower for word in ['precis', 'dúvid', 'pergunt', 'ajud', '?']):
+        return 'improdutivo', 0.9
         
-        # 2. Se NLP tem certeza, retorna direto
-        if nlp_result['confidence'] > 0.8:
-            return nlp_result['category'], nlp_result['confidence']
+    # Casos óbvios PRODUTIVOS  
+    if any(word in text_lower for word in ['precis', 'dúvid', 'pergunt', 'solicit', 'ajud']) or '?' in text:
+        return 'produtivo', 0.9
         
-        # 3. Casos ambíguos: usar Gemini
-        if GEMINI_API_KEY:
-            return classify_with_gemini(text)
-        else:
-            return nlp_result['category'], nlp_result['confidence']
-            
-    except Exception as e:
-        print(f"Erro na classificação: {e}")
+    # Casos ambíguos: usar Gemini
+    if GEMINI_API_KEY:
+        return classify_with_gemini(text)
+    else:
         return fallback_classification(text)
 
 def analyze_with_nlp(text: str) -> dict:
@@ -92,18 +90,17 @@ Email: "{text}"
 
 Responda apenas: PRODUTIVO ou IMPRODUTIVO"""
     
-    try:
-        response = model.generate_content(prompt)
-        result = response.text.strip().upper()
+    response = model.generate_content(prompt)
+    
+    if not response or not response.text:
+        raise Exception("Falha na classificação pela IA")
         
-        if 'PRODUTIVO' in result:
-            return 'produtivo', 0.9
-        else:
-            return 'improdutivo', 0.9
-            
-    except Exception as e:
-        print(f"Erro no Gemini: {e}")
-        return fallback_classification(text)
+    result = response.text.strip().upper()
+    
+    if 'PRODUTIVO' in result:
+        return 'produtivo', 0.9
+    else:
+        return 'improdutivo', 0.9
 
 def fallback_classification(text: str) -> Tuple[str, float]:
     """Classificação de fallback em caso de erro na IA"""

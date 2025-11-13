@@ -10,32 +10,28 @@ app = Flask(__name__)
 @app.route('/api/classify', methods=['POST'])
 def classify():
     """Endpoint principal de classificação com IA"""
-    try:
-        start_time = time.time()
-        data = request.get_json()
-        text = data.get('text', '').strip()
-        
-        if not text:
-            return jsonify({'error': 'Texto não fornecido'}), 400
-        
-        # Classificação usando algoritmo híbrido
-        category, confidence = classify_email(text)
-        
-        # Geração de resposta com IA ou fallback
-        response = generate_response(category, confidence, text)
-        
-        processing_time = round(time.time() - start_time, 3)
-        
-        return jsonify({
-            'category': category,
-            'confidence': confidence,
-            'response': response,
-            'processing_time': processing_time,
-            'ai_powered': bool(GEMINI_API_KEY)
-        })
-        
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    start_time = time.time()
+    data = request.get_json()
+    text = data.get('text', '').strip()
+    
+    if not text:
+        return jsonify({'error': 'Texto não fornecido'}), 400
+    
+    # Classificação usando algoritmo híbrido
+    category, confidence = classify_email(text)
+    
+    # Geração de resposta com IA ou fallback
+    response = generate_response(category, confidence, text)
+    
+    processing_time = round(time.time() - start_time, 3)
+    
+    return jsonify({
+        'category': category,
+        'confidence': confidence,
+        'response': response,
+        'processing_time': processing_time,
+        'ai_powered': bool(GEMINI_API_KEY)
+    })
 
 @app.route('/api/upload', methods=['POST'])
 def upload_file():
@@ -87,10 +83,13 @@ def health():
     """Status da API"""
     return jsonify({
         'status': 'ok',
-        'mode': 'ai_classification' if GEMINI_API_KEY else 'nlp_classification'
+        'mode': 'ai_classification' if GEMINI_API_KEY else 'nlp_classification',
+        'api_key_suffix': GEMINI_API_KEY[-8:] if GEMINI_API_KEY else 'none'
     })
 
 if __name__ == '__main__':
     print("🚀 Classificador de Emails rodando...")
     print(f"🤖 IA Gemini: {'Ativada' if GEMINI_API_KEY else 'Desativada (usando fallback)'}")
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    if GEMINI_API_KEY:
+        print(f"🔑 API Key: ...{GEMINI_API_KEY[-8:]}")
+    app.run(host='0.0.0.0', port=5000, debug=True)

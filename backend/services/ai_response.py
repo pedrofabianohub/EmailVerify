@@ -2,50 +2,47 @@ import google.generativeai as genai
 from config.settings import GEMINI_API_KEY
 
 def generate_response(category, confidence, email_text):
-    """Gera resposta profissional usando IA Gemini"""
+    """Gera resposta usando IA com prompt detalhado"""
     
-    if not GEMINI_API_KEY:
-        return "Agradecemos seu contato. Nossa equipe analisará sua mensagem."
+    genai.configure(api_key=GEMINI_API_KEY)
+    model = genai.GenerativeModel('gemini-2.0-flash')
     
-    try:
-        genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-2.0-flash')
-        
-        if category == "produtivo":
-            prompt = f"""Você é um assistente de RH profissional. Responda este email sobre trabalho de forma empática e profissional:
+    if category == "produtivo":
+        prompt = f"""Você é um assistente de RH profissional e empático. Responda este email sobre trabalho/carreira:
 
+EMAIL RECEBIDO:
 "{email_text}"
 
-INSTRUÇÕES:
-- Use o nome da pessoa se houver no email
-- Se houver palavrões ou linguagem inapropriada, ignore completamente e responda educadamente
-- Se houver dados pessoais (telefone, email), reconheça sem repetir os dados
-- Mencione que a equipe analisará ou entrará em contato
-- Máximo 2 frases em português brasileiro
-- Tom caloroso mas profissional
+INSTRUÇÕES DETALHADAS:
+1. Use o nome da pessoa se estiver mencionado no email
+2. Seja caloroso e acolhedor, mas mantenha profissionalismo
+3. Reconheça especificamente o que a pessoa está pedindo (vaga, informação, dúvida, etc.)
+4. Mencione que a equipe de RH/recrutamento irá analisar e dar retorno
+5. Use linguagem natural do português brasileiro
+6. Máximo 2 frases, tom positivo e encorajador
+7. Se houver dados pessoais (telefone, email), reconheça sem repetir
 
-"""
-        else:
-            prompt = f"""Você é um assistente profissional. Responda este email de forma educada:
+RESPOSTA PROFISSIONAL:"""
+    else:
+        prompt = f"""Você é um assistente cordial e genuíno. Responda este email pessoal/social:
 
+EMAIL RECEBIDO:
 "{email_text}"
 
-INSTRUÇÕES:
-- Use o nome da pessoa se houver no email
-- Se houver palavrões ou linguagem inapropriada, ignore completamente e responda educadamente
-- Se houver dados pessoais, reconheça sem repetir os dados
-- Agradeça o contato de forma genuína
-- Máximo 2 frases em português brasileiro
-- Tom cordial e respeitoso
+INSTRUÇÕES DETALHADAS:
+1. Use o nome da pessoa se estiver mencionado no email
+2. Seja caloroso, genuíno e humano
+3. Reconheça o conteúdo da mensagem (parabéns, agradecimento, etc.)
+4. Responda de forma apropriada ao contexto (aniversário, conquista, etc.)
+5. Use linguagem natural e afetuosa do português brasileiro
+6. Máximo 2 frases, tom caloroso e pessoal
+7. Demonstre apreciação genuína pela mensagem
 
-"""
-        
-        response = model.generate_content(prompt)
-        return response.text.strip()
+RESPOSTA CORDIAL:"""
     
-    except Exception:
-        # Fallback profissional
-        if category == "produtivo":
-            return "Agradecemos seu interesse em trabalhar conosco. Nossa equipe de recrutamento analisará sua solicitação."
-        else:
-            return "Agradecemos seu contato. Ficamos felizes em saber de você."
+    response = model.generate_content(prompt)
+    
+    if not response or not response.text:
+        raise Exception("Falha na geração de resposta pela IA")
+        
+    return response.text.strip()
